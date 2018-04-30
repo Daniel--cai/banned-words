@@ -1,0 +1,28 @@
+.landing {
+	background: url('../../assets/images/wallpaper.jpg');
+	background-size:     cover;                      
+    background-repeat:   no-repeat;
+    background-position: center center;
+}
+
+.join {
+    background: #f6f9fc;
+    position: relative
+}
+
+.join:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 100%;
+    top: 00px;
+    height: 420px;
+    background: #f6f9fc;
+    transform: skew(0, -12deg);
+    transform-origin: top left;
+    z-index: 0
+}
+
+.howToPlay > div {
+    z-index: 9;
+}

@@ -1,28 +1,16 @@
 import { h, Component } from 'preact';
-//import style from './style.css';
+let styles = require('./style.css');
 import classNames from 'classnames'
 import { connect } from 'redux-zero/preact';
 import actions from './actions';
 
 import * as Guid from 'guid';
-//const getClientId = () => 'web-client:' + Guid.raw();
-const getMessageId = () => 'message-id:' + Guid.raw();
 
-/*
-Move {
-	Game ID
-	Piece ID
-	ParticipantID 
-	Move Type  -> Name
-	Move Order
-	Move Notation
-	From Position
-	To Position
-	Rotation
+interface Props {
+	taboo: string[]
 }
-*/
 
-class Game extends Component<any,any> {
+class Game extends Component<Props, any> {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -35,15 +23,34 @@ class Game extends Component<any,any> {
 	}
 
 
+	handleClick = (index: number) => (event) => {
+		alert(index);
+	}
+
 	render() {
+
 		return (
 			<section class="hero is-fullheight">
-			
+				<div class="hero-body">
+					<div class="container has-text-centered">
+						<div class={styles["items"]}>
+							{
+								this.props.taboo.map((word, index) => {
+									return (
+										<div class={styles["item"]} onClick={this.handleClick(index)}>{word}</div>
+									)
+
+								})
+							}
+						</div>
+					</div>
+
+				</div>
 			</section >
 
 		);
 	}
 }
 
-const mapToProps = ({ username, loading, guid }) => ({ username, loading, guid });
+const mapToProps = ({ taboo }) => ({ taboo });
 export default connect(mapToProps, actions)(Game)

@@ -8,7 +8,9 @@ import store from "./store";
 
 function init() {
     root = render(
+         <Provider store={store}>
             <App />
+         </Provider>
         , document.body, root);
 }
 

@@ -1,16 +1,15 @@
 import { h, Component } from 'preact';
 import { Router } from 'preact-router';
 
-import Header from './header';
 import Home from '../routes/home';
 import Game from '../routes/Game';
-
+import Lobby from '../routes/Lobby'
 export interface Props {
 
 }
 
 export interface State {
-	
+
 }
 
 export default class App extends Component<Props, State> {
@@ -23,6 +22,7 @@ export default class App extends Component<Props, State> {
 				<Router onChange={this.handleRoute}>
 					<Home path="/" />
 					<Game path="/game/" />
+					<Lobby path="/lobby" />
 				</Router>
 			</div>
 		);

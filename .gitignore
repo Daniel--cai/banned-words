@@ -1,13 +1,10 @@
 # package directories
 node_modules
-jspm_packages
 
 # Serverless directories
 .serverless
+.webpack
 
-lib/
-.merlin
-.bsb.lock
 
 secret/
 secret*

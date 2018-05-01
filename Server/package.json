@@ -1,0 +1,30 @@
+{
+  "name": "bannedwords.server",
+  "version": "1.0.0",
+  "description": "Banned Words",
+  "author": "",
+  "license": "MIT",
+  "scripts": {
+    "start": "serverless offline start"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.202.0",
+    "aws-signature-v4": "^1.2.1",
+    "body-parser": "^1.18.2",
+    "crypto": "^1.0.1",
+    "express": "^4.16.2",
+    "serverless-http": "^1.5.2",
+    "uuid": "^2.0.3"
+  },
+  "devDependencies": {
+    "serverless": "^1.25.0",
+    "serverless-dynamodb-local": "^0.2.27",
+    "serverless-offline": "^3.20.3",
+    "serverless-secrets-plugin": "^0.1.0",
+    "serverless-webpack": "^5.1.3",
+    "ts-loader": "^4.2.0",
+    "typescript": "^2.8.3",
+    "webpack": "^4.6.0",
+    "webpack-node-externals": "^1.7.2"
+  }
+}

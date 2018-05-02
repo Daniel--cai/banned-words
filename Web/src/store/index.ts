@@ -10,7 +10,7 @@ const initialState: State = {
     username: '',
     guid: '',
     loading: false,
-    taboo: Array(16).fill("1223fgadjfhsff4")
+    taboo: ["star","saastar","stfsfsfar","sfsfsfsfsfs","star","star","stasr","star","stsssar","star","stasdfr","ss","star","star","stfsfasfar","sstar"]
 };
 const store = createStores(initialState)
 

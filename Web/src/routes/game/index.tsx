@@ -1,55 +1,70 @@
 import { h, Component } from 'preact';
 let styles = require('./style.css');
-import classNames from 'classnames'
+import classnames from 'classnames'
 import { connect } from 'redux-zero/preact';
-import actions from './actions';
+import actions, { Action } from './actions';
 import isDoubleTap from '../../framework/DoubleTap';
 import * as Guid from 'guid';
 
-interface Props {
+interface IProps {
 	taboo: string[]
 }
 
 interface State {
 	toggleTips: boolean;
+	score: number[]
+	penalties: Penalty[];
 }
 
-class Game extends Component<Props, State> {
+interface Penalty {
+	word: string;
+	count: number
+}
+
+class Game extends Component<IProps & Action, State> {
 	constructor(props) {
 		super(props);
 		this.state = {
 			toggleTips: false,
+			score: [0, 0],
+			penalties: this.props.taboo.map(word => ({ word, count: 0 }))
 		}
 	}
 
-	handleDoubleClick = (index: number) => (event) => {
-		if (isDoubleTap(index)) {
-			alert(index)
+	handleDoubleClick = (word: string) => (event) => {
+		if (isDoubleTap(event)) {
+			const score = this.state.score.map((current, index) =>
+				index == 0 ? current : ++current
+			)
+			const penalties = this.state.penalties.map(penalty => ({ word: penalty.word, count: (penalty.word == word ? penalty.count + 1 : penalty.count) }))
+			const state = { ...this.state, score, penalties }
+			this.setState(state)
 		}
 
 	}
 
 	renderTiles() {
 		return (
-
 			<table class="table is-bordered  is-fullwidth">
 				{
-					this.props.taboo.map((word, index) => {
-						if (index % 2 == 0)
-							return (
-								<tr onClick={this.handleDoubleClick(index)}>
+					this.state.penalties.map((penalty, index) => {
 
-									<td>
-										<span class="tag is-light is-rounded ">{0}</span>
-										<span class="tag is-white ">{word}</span>
+						if (index % 2 == 0) {
+							const next = this.state.penalties[index + 1]
+							return (
+								<tr >
+
+									<td onClick={this.handleDoubleClick(penalty.word)}>
+										<span class="tag is-light is-rounded ">{penalty.count}</span>
+										<span class="tag is-white ">{penalty.word}</span>
 									</td>
-									<td >
-										<span class="tag is-light is-rounded">{1}</span>
-										<span class="tag is-white">{this.props.taboo[index + 1]}</span>
+									<td onClick={this.handleDoubleClick(next.word)}>
+										<span class="tag is-rounded is-light">{next.count}</span>
+										<span class="tag is-white">{next.word}</span>
 									</td>
 								</tr>
 							)
-
+						}
 					})
 				}
 			</table>
@@ -57,7 +72,7 @@ class Game extends Component<Props, State> {
 	}
 
 	handleAddWord = (event) => {
-		console.log("df")
+		this.props.addWord({name: "word", team:"team"})
 	}
 
 	renderSelectTiles() {
@@ -79,14 +94,14 @@ class Game extends Component<Props, State> {
 				<div class="column is-half-mobile">
 					<article class="message is-info">
 						<div class="message-header">
-							<p class="title is-1 has-text-centered is-white">10</p>
+							<p class="title is-1 has-text-centered is-white">{this.state.score[0]}</p>
 						</div>
 					</article>
 				</div>
 				<div class="column is-half-mobile">
 					<article class="message is-danger">
 						<div class="message-header">
-							<p class="title is-1 has-text-centered">{1}</p>
+							<p class="title is-1 has-text-centered">{this.state.score[1]}</p>
 						</div>
 					</article>
 				</div>

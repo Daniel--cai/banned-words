@@ -37,7 +37,7 @@ class Lobby extends Component<any, State> {
                     </div>
                 </div>
                 <div class="field">
-                    <button class="button ">Create</button>
+                    <button class="button ">Create</button>&nbsp;
                     <button class="button" onClick={this.handleClick(MenuState.Default)}>Back</button>
                 </div>
             </div>
@@ -57,7 +57,7 @@ class Lobby extends Component<any, State> {
                     </div>
                 </div>
                 <div class="field">
-                    <button class="button ">Join</button>
+                    <button class="button ">Join</button>&nbsp;
                     <button class="button" onClick={this.handleClick(MenuState.Default)}>Back</button>
                 </div>
             </div>
@@ -73,7 +73,7 @@ class Lobby extends Component<any, State> {
             default:
                 return (
                     <div class="field">
-                        <button class="button" onClick={this.handleClick(MenuState.New)} >New Game</button>
+                        <button class="button" onClick={this.handleClick(MenuState.New)} >New Game</button>&nbsp;
                         <button class="button" onClick={this.handleClick(MenuState.Join)}>Join Game</button>
                     </div>
                 )
@@ -87,7 +87,8 @@ class Lobby extends Component<any, State> {
 
                 <div class="hero-body">
                     <div class="container has-text-centered">
-                        <img src="../../assets/images/box.jpg" alt=""/>
+                        {/* <img src="../../assets/images/box.jpg" alt=""/> */}
+                        <p class="title is-3">Banned Words</p>
                         {
                             this.menuState()
                         }

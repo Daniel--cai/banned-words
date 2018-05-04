@@ -85,24 +85,20 @@ class Submission extends Component<IProps & Action, State> {
 	renderSelectTiles() {
 		const placeholder = !this.disabled() ? "Enter a banned word" : "Double tap a word to unban"
 		return (
-			<form onSubmit={this.handleAddWord}>
-				<div class="field has-addons">
-					<p class="control is-expanded">
-						<input disabled={this.disabled()} class="input" type="text" value={this.state.submission} onInput={linkState(this, 'submission')} placeholder={placeholder} />
-					</p>
-					<p class="control">
-						<button class="button" disabled={this.disabled() || this.state.submission == "" || this.exists()} onClick={this.handleAddWord}>Ban</button>
-					</p>
-				</div>
-			</form>
+			<div class="input-holster">
+				<form onSubmit={this.handleAddWord}>
+					<input disabled={this.disabled()} class="input is-static" type="text" value={this.state.submission} onInput={linkState(this, 'submission')} placeholder={placeholder} />
+					{/* <p class="control">
+						<button class="button is-dark" disabled={this.disabled() || this.state.submission == "" || this.exists()} onClick={this.handleAddWord}>Ban</button>
+					</p> */}
+				</form>
+			</div>
 		)
 	}
 
 	renderTimer() {
 		return (
-			<p class="title is-1">
-				 60
-			</p>
+			<progress class="progress is-warning is-marginless is-no-border-radius" value="90" max="100">90%</progress>
 		)
 	}
 
@@ -123,12 +119,22 @@ class Submission extends Component<IProps & Action, State> {
 		return (
 			<section class="hero is-fullheight">
 				<div class="hero-body">
+					<nav class="navbar is-fixed-top">
+						<div class="container has-text-centered">
+							<KeywordHeader keywords={this.props.keywords} />							
+						</div>
+					</nav>
 					<div class="container has-text-centered">
-						{this.renderTimer()}
-						<KeywordHeader keywords={this.props.keywords}/>
+
 						{this.renderPendingTiles()}
-						{this.renderSelectTiles()}
+
 					</div>
+					<nav class="navbar is-fixed-bottom">
+						<div class="container has-text-centered">
+							{this.renderTimer()}
+							{this.renderSelectTiles()}
+						</div>
+					</nav>
 				</div>
 			</section >
 

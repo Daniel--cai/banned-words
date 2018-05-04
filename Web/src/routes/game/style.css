@@ -1,13 +1,15 @@
-.items {
-	display: flex;
-	flex-wrap: wrap;
+.score {
+	color:white;
+	border-radius: 4%;
 }
-.item {
-	word-break: break-all;
-	flex: 1 0 50%;
-	border-radius: 5px;
-	-webkit-box-shadow: 0 2px 3px rgba(10,10,10,.1), 0 0 0 1px rgba(10,10,10,.1);
-	box-shadow: 0 2px 3px rgba(10,10,10,.1), 0 0 0 1px rgba(10,10,10,.1);
-	color: #4a4a4a;
-	padding: 1.25rem;
+
+.is-blue{
+	background:hsl(204, 86%, 53%)
+}
+
+.is-red{
+	background: hsl(348, 100%, 61%)
+}
+.is-white {
+	color:white;
 }

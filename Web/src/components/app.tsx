@@ -4,25 +4,22 @@ import { Router } from 'preact-router';
 import Home from '../routes/home';
 import Game from '../routes/Game';
 import Lobby from '../routes/Lobby'
-export interface Props {
+import Submission from '../routes/Submission'
 
-}
+interface Props {}
 
-export interface State {
-
-}
+interface State {}
 
 export default class App extends Component<Props, State> {
-	handleRoute(e) {
-		// this.currentUrl = e.url;
-	};
+
 	render() {
 		return (
 			<div id="app">
-				<Router onChange={this.handleRoute}>
+				<Router >
 					<Home path="/" />
 					<Game path="/game/" />
 					<Lobby path="/lobby" />
+					<Submission path="/submission" />
 				</Router>
 			</div>
 		);

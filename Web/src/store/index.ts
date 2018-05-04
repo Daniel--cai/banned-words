@@ -3,14 +3,16 @@ export interface State {
     username: string;
     guid: string;
     loading: boolean;
-    taboo: string[]
+    taboos: string[]
+    keywords: string[]
 }
 
 const initialState: State = {
     username: '',
     guid: '',
     loading: false,
-    taboo: ["star","saastar","stfsfsfar","sfsfsfsfsfs","star","star","stasr","star","stsssar","star","stasdfr","ss","star","star","stfsfasfar","sstar"]
+    taboos: ["star", "saastar", "stfsfsfar", "sfsfsfsfsfs", "star", "star", "stasr", "star", "stsssar", "star", "stasdfr", "ss", "star", "star", "stfsfasfar", "sstar"],
+    keywords: ["apple", "turtle", "ship", "table", "monkey"],
 };
 const store = createStores(initialState)
 

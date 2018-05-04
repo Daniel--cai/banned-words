@@ -1,19 +1,35 @@
 import { h, Component } from 'preact';
-let styles = require('./style.css');
+//let styles = require('./style.css');
+import './style.css'
 import classnames from 'classnames'
 import { connect } from 'redux-zero/preact';
 import actions, { Action } from './actions';
 import isDoubleTap from '../../framework/DoubleTap';
 import * as Guid from 'guid';
+import linkState from 'linkstate'
+import ScoreHeader from './ScoreHeader'
+
+const DefaultTimerCountdown = 5
+
+enum GameState {
+	Ready,
+	Guessing,
+	TimesUp
+}
 
 interface IProps {
-	taboo: string[]
+	taboos: string[]
+	keywords: string[]
 }
 
 interface State {
-	toggleTips: boolean;
 	score: number[]
 	penalties: Penalty[];
+	submission: string;
+	correct: string[];
+	gameState: GameState;
+	countdown: number;
+	timer: any,
 }
 
 interface Penalty {
@@ -25,9 +41,13 @@ class Game extends Component<IProps & Action, State> {
 	constructor(props) {
 		super(props);
 		this.state = {
-			toggleTips: false,
 			score: [0, 0],
-			penalties: this.props.taboo.map(word => ({ word, count: 0 }))
+			penalties: this.props.taboos.map(word => ({ word, count: 0 })),
+			submission: "",
+			correct: [],
+			gameState: GameState.Ready,
+			countdown: -1,
+			timer: null,
 		}
 	}
 
@@ -41,6 +61,21 @@ class Game extends Component<IProps & Action, State> {
 			this.setState(state)
 		}
 
+	}
+
+	startTimer() {
+		let timer = setInterval(this.handleTimerTick, 1000);
+		this.setState({ timer, countdown: DefaultTimerCountdown });
+	}
+
+	handleTimerTick = () => {
+		const countdown = --this.state.countdown;
+		if (countdown == 0) {
+			this.setState({ gameState: GameState.TimesUp })
+			clearInterval(this.state.timer);
+		} else {
+			this.setState({ countdown });
+		}
 	}
 
 	renderTiles() {
@@ -71,82 +106,159 @@ class Game extends Component<IProps & Action, State> {
 		)
 	}
 
+	renderPendingTiles() {
+		return (
+			<table class="table is-bordered  is-fullwidth">
+				{
+					this.props.taboos.map((word, index) => {
+
+
+						if (index % 2 == 0) {
+							const next = this.props.taboos[index + 1]
+							return (
+								<tr >
+
+									<td onClick={this.handleDoubleClick(word)}>
+										<span class="tag is-white ">{word}</span>
+									</td>
+									<td onClick={this.handleDoubleClick(next)}>
+										<span class="tag is-white">{next}</span>
+									</td>
+								</tr>
+							)
+						}
+					})
+				}
+			</table>
+		)
+	}
+
 	handleAddWord = (event) => {
-		this.props.addWord({name: "word", team:"team"})
+		event.preventDefault()
+		this.props.addWord(this.state.submission, "team");
+		this.setState({ submission: "" })
+	}
+	componentWillUnmount() {
+		clearInterval(this.state.timer);
 	}
 
-	renderSelectTiles() {
-		return (
-			<div class="field has-addons">
-				<p class="control is-expanded">
-					<input class="input" type="text" placeholder="Enter a banned word" />
-				</p>
-				<p class="control">
-					<a class="button" onClick={this.handleAddWord}>Ban</a>
-				</p>
-			</div>
+	isAnswered(word: string) {
+		return this.state.correct.findIndex(correct => correct == word) != -1
+	}
+
+	handleCorrect = (word: string) => (event) => {
+		if (!isDoubleTap(event) || this.isAnswered(word)) return
+		const score = this.state.score.map((current, index) =>
+			index == 0 ? current : ++current
 		)
+		this.setState({ score })
 	}
 
-	renderScore() {
-		return (
-			<div class="columns is-mobile">
-				<div class="column is-half-mobile">
-					<article class="message is-info">
-						<div class="message-header">
-							<p class="title is-1 has-text-centered is-white">{this.state.score[0]}</p>
-						</div>
-					</article>
+	renderKeywords() {
+		return this.props.keywords.map(keyword => {
+			return (
+				<div class="box" onClick={this.handleCorrect(keyword)}>
+					<strong>{keyword.toUpperCase()}</strong>
 				</div>
-				<div class="column is-half-mobile">
-					<article class="message is-danger">
-						<div class="message-header">
-							<p class="title is-1 has-text-centered">{this.state.score[1]}</p>
-						</div>
-					</article>
-				</div>
-			</div>
-		)
+			)
+		})
 	}
 
-	renderTip() {
-		return (
-			<article class="message is-small is-warning">
-				<div class="message-header">
-					<p>Double tap a word to unban</p>
-					<button class="delete is-small" onClick={() => this.setState({ toggleTips: true })}></button>
-				</div>
-			</article>
-		)
-
+	handleGameState = (gameState: GameState) => (event) => {
+		this.setState({ gameState });
 	}
 
-	renderTimer() {
-		return (
-			<p class="title is-1">
-				- 60 -
-			</p>
-		)
+	handleTimeout = () => {
+		console.log(this.state)
+		this.setState({ countdown: --this.state.countdown })
+		if (this.state.countdown == 0) {
+			this.startTimer()
+			this.setState({ gameState: GameState.Guessing })
+		}
+		else {
+			setTimeout(this.handleTimeout, 1000);
+		}
 	}
 
-	render() {
+	handleCountdown = (event) => {
+		this.setState({ countdown: 3 })
+		setTimeout(this.handleTimeout, 1000);
+	}
 
+	renderReady() {
 		return (
-			<section class="hero is-fullheight">
+			<section class="hero is-success is-fullheight">
 				<div class="hero-body">
 					<div class="container has-text-centered">
-						{this.renderTimer()}
-						{this.renderScore()}
-						{this.renderTiles()}
-						{!this.state.toggleTips && this.renderTip()}
-						{this.renderSelectTiles()}
+						<p class="title is-1">
+							Ready
+							</p>
+						<br />
+						{this.state.countdown == -1 &&
+							<p>
+								<span class="icon" onClick={this.handleCountdown}>
+									<i class="fas fa-3x fa-play-circle"></i>
+								</span>
+							</p>
+						}
+						{this.state.countdown > 0 &&
+							<p class="title is-1">{this.state.countdown}</p>
+						}
+					</div>
+				</div>
+			</section >
+		)
+	}
+
+	renderTimesUp() {
+		return (
+			<section class="hero is-danger is-fullheight">
+				<div class="hero-body">
+					<div class="container has-text-centered">
+						<p class="title is-1">
+							Time's up!
+						</p>
+						<br />
+						{
+							<span class="icon" >
+								<i class="fas fa-3x fa-sign-out-alt"></i>
+							</span>
+						}
 					</div>
 				</div>
 			</section >
 
-		);
+		)
+	}
+	renderGame() {
+		return (
+			<div class="hero is-fullheight">
+				<div class="hero-body">
+					<div class="container has-text-centered">
+						<ScoreHeader score={this.state.score} countdown={this.state.countdown} />
+						{/* {this.renderKeywords()} */}
+						{this.renderTiles()}
+					</div>
+				</div>
+
+			</div>
+		)
+	}
+
+
+	render() {
+		switch (this.state.gameState) {
+			case GameState.Ready:
+				return this.renderReady()
+			case GameState.Guessing:
+				return this.renderGame()
+			case GameState.TimesUp:
+				return this.renderTimesUp()
+			default:
+				return this.renderGame()
+		}
 	}
 }
 
-const mapToProps = ({ taboo }) => ({ taboo });
+const mapToProps = ({ taboos, keywords }) => ({ taboos, keywords });
 export default connect(mapToProps, actions)(Game)

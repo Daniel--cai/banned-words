@@ -13,3 +13,8 @@
 .is-white {
 	color:white;
 }
+
+.is-answered {
+	background: hsl(141, 71%, 48%);
+	color: white;
+}

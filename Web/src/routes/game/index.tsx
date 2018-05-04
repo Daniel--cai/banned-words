@@ -8,6 +8,7 @@ import isDoubleTap from '../../framework/DoubleTap';
 import * as Guid from 'guid';
 import linkState from 'linkstate'
 import ScoreHeader from './ScoreHeader'
+import KeywordHeader from '../../components/KeywordHeader'
 
 const DefaultTimerCountdown = 5
 
@@ -90,12 +91,12 @@ class Game extends Component<IProps & Action, State> {
 								<tr >
 
 									<td onClick={this.handleDoubleClick(penalty.word)}>
-										<span class="tag is-light is-rounded ">{penalty.count}</span>
-										<span class="tag is-white ">{penalty.word}</span>
+										<span class={classnames("tag is-light is-rounded", { 'is-invisible': penalty.count == 0 })}>{penalty.count}</span>
+										<strong> {penalty.word.toLocaleUpperCase()}</strong>
 									</td>
 									<td onClick={this.handleDoubleClick(next.word)}>
-										<span class="tag is-rounded is-light">{next.count}</span>
-										<span class="tag is-white">{next.word}</span>
+										<span class={classnames("tag is-light is-rounded", { 'is-invisible': next.count == 0 })}>{next.count}</span>
+										<strong> {next.word.toLocaleUpperCase()}</strong>
 									</td>
 								</tr>
 							)
@@ -151,14 +152,17 @@ class Game extends Component<IProps & Action, State> {
 		const score = this.state.score.map((current, index) =>
 			index == 0 ? current : ++current
 		)
-		this.setState({ score })
+		const answered = [...this.state.correct, word]
+		this.setState({ score, correct: answered })
 	}
 
 	renderKeywords() {
+
 		return this.props.keywords.map(keyword => {
+			const answered = this.state.correct.indexOf(keyword) != -1
 			return (
-				<div class="box" onClick={this.handleCorrect(keyword)}>
-					<strong>{keyword.toUpperCase()}</strong>
+				<div class={classnames("box", { 'is-answered': answered })} onClick={this.handleCorrect(keyword)}>
+					<b>{keyword.toUpperCase()}</b>
 				</div>
 			)
 		})
@@ -236,6 +240,7 @@ class Game extends Component<IProps & Action, State> {
 				<div class="hero-body">
 					<div class="container has-text-centered">
 						<ScoreHeader score={this.state.score} countdown={this.state.countdown} />
+						<KeywordHeader keywords={this.props.keywords} correct={this.state.correct}/>
 						{/* {this.renderKeywords()} */}
 						{this.renderTiles()}
 					</div>
@@ -247,16 +252,17 @@ class Game extends Component<IProps & Action, State> {
 
 
 	render() {
-		switch (this.state.gameState) {
-			case GameState.Ready:
-				return this.renderReady()
-			case GameState.Guessing:
-				return this.renderGame()
-			case GameState.TimesUp:
-				return this.renderTimesUp()
-			default:
-				return this.renderGame()
-		}
+		return this.renderGame();
+		// switch (this.state.gameState) {
+		// 	case GameState.Ready:
+		// 		return this.renderReady()
+		// 	case GameState.Guessing:
+		// 		return this.renderGame()
+		// 	case GameState.TimesUp:
+		// 		return this.renderTimesUp()
+		// 	default:
+		// 		return this.renderGame()
+		// }
 	}
 }
 

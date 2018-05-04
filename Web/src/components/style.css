@@ -1,0 +1,17 @@
+.keyword-header {
+    background-color: hsl(0, 0%, 21%);
+    color: white;
+    margin-bottom: 1.5rem;
+    width: 100%;
+    border-radius: 5px;
+    -webkit-box-shadow: 0 2px 3px rgba(10,10,10,.1), 0 0 0 1px rgba(10,10,10,.1);
+    box-shadow: 0 2px 3px rgba(10,10,10,.1), 0 0 0 1px rgba(10,10,10,.1);
+}
+.keyword-header td {
+    /* border: 1px solid #dbdbdb; */
+    border-width: 0 0 1px;
+    vertical-align: top;
+    padding: 10px 0px;
+    text-align: center;
+    text-transform: uppercase;
+}

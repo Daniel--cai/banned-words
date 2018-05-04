@@ -6,6 +6,7 @@ import actions, { Action } from './actions';
 import isDoubleTap from '../../framework/DoubleTap';
 import * as Guid from 'guid';
 import linkState from 'linkstate'
+import KeywordHeader from '../../components/KeywordHeader'
 
 interface IProps {
 	taboos: string[]
@@ -100,7 +101,7 @@ class Submission extends Component<IProps & Action, State> {
 	renderTimer() {
 		return (
 			<p class="title is-1">
-				- 60 -
+				 60
 			</p>
 		)
 	}
@@ -118,13 +119,13 @@ class Submission extends Component<IProps & Action, State> {
 	}
 
 	render() {
-
+		console.log(this.props.keywords)
 		return (
 			<section class="hero is-fullheight">
 				<div class="hero-body">
 					<div class="container has-text-centered">
 						{this.renderTimer()}
-						{this.renderKeywords()}
+						<KeywordHeader keywords={this.props.keywords}/>
 						{this.renderPendingTiles()}
 						{this.renderSelectTiles()}
 					</div>

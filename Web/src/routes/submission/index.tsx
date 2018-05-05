@@ -8,7 +8,7 @@ import * as Guid from 'guid';
 import linkState from 'linkstate'
 import KeywordHeader from '../../components/KeywordHeader'
 
-interface IProps {
+interface Props {
 	taboos: string[]
 	keywords: string[]
 }
@@ -23,7 +23,7 @@ interface Penalty {
 	count: number
 }
 
-class Submission extends Component<IProps & Action, State> {
+class Submission extends Component<Props & Action, State> {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -80,6 +80,10 @@ class Submission extends Component<IProps & Action, State> {
 
 	exists() {
 		return this.props.taboos.findIndex(taboo => taboo == this.state.submission) != -1
+	}
+
+	async componentDidMount(){
+		const keywords = await this.props.getKeywords();
 	}
 
 	renderSelectTiles() {

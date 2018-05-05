@@ -1,13 +1,24 @@
-import axios from 'axios'
+import Api from '../../framework/Api'
 const BASE_URL = "http://localhost:3000"
 import { State } from '../../store'
 
 export interface Action {
 	addWord: (name: string, team: string) => Promise<State>
 	removeWord: (word: string) => Promise<State>
+	getKeywords: ()=> Promise<State>
 }
 
 const actions = store => ({
+	getKeywords: async (state) => {
+		store.setState({ keywords: [] })
+		try {
+			const response = await Api.get("/lobby")
+			const keywords = response.data
+			return ({ keywords })
+		} catch (error) {
+			return ({ ...state })
+		}
+	},
 	addWord: async (state: State, name: string, team: string) => {
 
 		store.setState({ loading: true });

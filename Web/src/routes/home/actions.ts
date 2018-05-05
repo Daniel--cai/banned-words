@@ -1,16 +1,23 @@
-import axios from 'axios'
-const BASE_URL = "http://localhost:3000"
+
+import { State } from '../../store'
+import Api from '../../framework/Api'
+
+export interface Action {
+	createLobby: (name: string) => Promise<State>
+}
+
 
 const actions = store => ({
-	setUsername: (state, body) => {
-		store.setState({ loading: true });
-		console.log("hello")
-		return axios.post(`${BASE_URL}/users`, body)
-			.then(response => {
-				console.log(response.data.id)
-				return { username:body.name , loading: false, guid:response.data.id }
-			})
-			.catch(error => ({ loading: false }));
-	}
+	createLobby: async (state: State, name: string) => {
+
+		const body = { name }
+		try {
+			const response = await Api.post(`/lobby`, body)
+			console.log(response.data)
+			return { guid: response.data, name: name }
+		} catch (error) {
+			return ({ ...state, loading: false })
+		}
+	},
 });
 export default actions;

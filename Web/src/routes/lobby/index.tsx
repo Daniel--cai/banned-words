@@ -4,100 +4,80 @@ import classnames from 'classnames'
 import linkState from 'linkstate';
 
 import { connect } from 'redux-zero/preact';
-import actions from './actions'
+import actions, { Action } from './actions';
 import { route } from 'preact-router'
 
-enum MenuState {
-    Default = 0,
-    New,
-    Join
-}
 
 interface State {
-    status: MenuState
 }
 
-class Lobby extends Component<any, State> {
-    constructor(props) {
-        super(props);
-        this.state = {
-            status: MenuState.Default
-        }
-    }
-    handleClick = (status: MenuState) => (event) => {
-        this.setState({ status })
+interface Props {
+    name: string
+    guid: string
+}
+
+class Lobby extends Component<Props & Action, State> {
+
+    handleChangeTeams = (team) => (event) => {
+
     }
 
-    renderNewGame() {
+    renderTeams() {
         return (
-            <div>
-                <div class="field">
-                    <div class="control">
-                        <input class="input" type="text" placeholder="Enter your name" />
-                    </div>
-                </div>
-                <div class="field">
-                    <button class="button ">Create</button>&nbsp;
-                    <button class="button" onClick={this.handleClick(MenuState.Default)}>Back</button>
-                </div>
-            </div>
-        )
-    }
-    renderJoinGame() {
-        return (
-            <div>
-                <div class="field">
-                    <div class="control">
-                        <input class="input" type="text" placeholder="Enter an access Code" maxLength={5} />
-                    </div>
-                </div>
-                <div class="field">
-                    <div class="control">
-                        <input class="input" type="text" placeholder="Name your name" />
-                    </div>
-                </div>
-                <div class="field">
-                    <button class="button ">Join</button>&nbsp;
-                    <button class="button" onClick={this.handleClick(MenuState.Default)}>Back</button>
-                </div>
-            </div>
+            <table class="table is-bordered  is-fullwidth">
+                <tr>
+                    <th class="is-info">Blue</th>
+                    <th class="is-danger">Red</th>
+                </tr>
+                {
+                    (Array(8 - length).fill(""))
+                        .map((player, index) => {
+
+                            // if (index % 2 == 0) {
+                            // const next = this.props.taboos[index + 1]
+                            const word = "sdfsdf"
+                            const next = "sdfsdf"
+                            return (
+                                <tr >
+
+                                    <td class="is-half">
+                                        <span >{word || '\u200E'}</span>
+                                    </td>
+                                    <td class="is-half">
+                                        <span >{next}</span>
+                                    </td>
+                                </tr>
+                            )
+                            //}
+                        })
+                }
+            </table>
         )
     }
 
-    menuState() {
-        switch (this.state.status) {
-            case MenuState.New:
-                return this.renderNewGame()
-            case MenuState.Join:
-                return this.renderJoinGame()
-            default:
-                return (
-                    <div class="field">
-                        <button class="button" onClick={this.handleClick(MenuState.New)} >New Game</button>&nbsp;
-                        <button class="button" onClick={this.handleClick(MenuState.Join)}>Join Game</button>
-                    </div>
-                )
-        }
+    renderStart() {
+        return (
+            <button class="button is-fullwidth">Start</button>
+        )
     }
 
-    render({ username, loading, guid }) {
-        const bodyClass = classnames('')
+    renderLobbyDetails() {
         return (
-            <section class={classnames('hero', 'is-fullheight')}>
+            <p>{this.props.guid}</p>
+        )
+    }
+
+    render() {
+        return (
+            <section class="hero is-fullheight">
 
                 <div class="hero-body">
                     <div class="container has-text-centered">
-                        {/* <img src="../../assets/images/box.jpg" alt=""/> */}
-                        <p class="title is-3">Banned Words</p>
-                        {
-                            this.menuState()
-                        }
+                        {this.renderLobbyDetails()}
+                        {this.renderTeams()}
+                        {this.renderStart()}
                     </div>
                 </div>
-                {/* <div class="footer">
-                    Banned Words designed by Forrest-Pruzan Creative published by <a href="http://www.wonderforge.com/">Wonder Forge</a>
-
-                </div> */}
             </section >
 
 
@@ -106,5 +86,5 @@ class Lobby extends Component<any, State> {
 }
 
 
-const mapToProps = ({ username, loading, guid }) => ({ username, loading, guid });
+const mapToProps = ({ name, guid }) => ({ name, guid });
 export default connect(mapToProps, actions)(Lobby);

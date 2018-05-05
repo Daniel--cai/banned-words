@@ -8,10 +8,10 @@ export default class Api {
     }
 
     static async post(url, body){
-        return await axios.get(`${BASE}${url}`);
+        return await axios.post(`${BASE}${url}`);
     }
 
     static async put(url, body){
-        return await axios.get(`${BASE}${url}`);
+        return await axios.put(`${BASE}${url}`);
     }
 }

@@ -1,6 +1,6 @@
 import createStores from 'redux-zero'
 export interface State {
-    username: string;
+    name: string;
     guid: string;
     loading: boolean;
     taboos: string[]
@@ -8,7 +8,7 @@ export interface State {
 }
 
 const initialState: State = {
-    username: '',
+    name: '',
     guid: '',
     loading: false,
     taboos: ["star", "saastar", "stfsfsfar", "sfsfsfsfsfs", "star", "star", "stasr", "star", "stsssar", "star", "stasdfr", "ss", "star", "star", "stfsfasfar", "sstar"],

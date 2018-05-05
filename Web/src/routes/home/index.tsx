@@ -4,77 +4,119 @@ import classnames from 'classnames'
 import linkState from 'linkstate';
 
 import { connect } from 'redux-zero/preact';
-import actions from './actions'
-
+import actions, { Action } from './actions';
 import { route } from 'preact-router'
 
+enum MenuState {
+    Default = 0,
+    New,
+    Join
+}
+
+interface State {
+    status: MenuState
+    name: string
+}
+
+interface Props {
+    name: string
+    guid: string
+}
+
+class Home extends Component<Props & Action, State> {
+    constructor(props) {
+        super(props);
+        this.state = {
+            status: MenuState.Default,
+            name: ""
+        }
+    }
+    handleClick = (status: MenuState) => (event) => {
+        this.setState({ status })
+    }
+
+     handleNewGame = async (event) => {
+        await this.props.createLobby(this.state.name)
+        console.log(this.props.guid)
+        route("/lobby")
+    }
+
+    renderNewGame() {
+        return (
+            <div>
+                <div class="field">
+                    <div class="control">
+                        <input class="input" type="text" placeholder="Enter your name" value={this.state.name} onInput={linkState(this, "name")} />
+                    </div>
+                </div>
+                <div class="field">
+                    <button class="button" onClick={this.handleNewGame}>Create</button>&nbsp;
+                    <button class="button" onClick={this.handleClick(MenuState.Default)}>Back</button>
+                </div>
+            </div>
+        )
+    }
+    renderJoinGame() {
+        return (
+            <div>
+                <div class="field">
+                    <div class="control">
+                        <input class="input" type="text" placeholder="Enter an access Code" maxLength={5} />
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <input class="input" type="text" placeholder="Name your name" />
+                    </div>
+                </div>
+                <div class="field">
+                    <button class="button ">Join</button>&nbsp;
+                    <button class="button" onClick={this.handleClick(MenuState.Default)}>Back</button>
+                </div>
+            </div>
+        )
+    }
+
+    menuState() {
+        switch (this.state.status) {
+            case MenuState.New:
+                return this.renderNewGame()
+            case MenuState.Join:
+                return this.renderJoinGame()
+            default:
+                return (
+                    <div class="field">
+                        <button class="button" onClick={this.handleClick(MenuState.New)} >New Game</button>&nbsp;
+                        <button class="button" onClick={this.handleClick(MenuState.Join)}>Join Game</button>
+                    </div>
+                )
+        }
+    }
+
+    render() {
+        return (
+            <section class="hero is-fullheight">
+
+                <div class="hero-body">
+                    <div class="container has-text-centered">
+                        {/* <img src="../../assets/images/box.jpg" alt=""/> */}
+                        <p class="title is-3">Banned Words</p>
+                        {
+                            this.menuState()
+                        }
+                    </div>
+                </div>
+                {/* <div class="footer">
+                    Banned Words designed by Forrest-Pruzan Creative published by <a href="http://www.wonderforge.com/">Wonder Forge</a>
+
+                </div> */}
+            </section >
 
 
-class Home extends Component<any,any> {
-	handleClick = async (event) => {
-		await this.props.setUsername({
-			name: this.state.name,
-			email: this.state.email
-		})
-		route('/game')
-	}
-
-	render({ username, loading, guid }, { name, email }) {
-		const bodyClass = classnames('')
-		return (
-			<div>
-				<section class={classnames('hero', 'is-fullheight')}>
-					< div class="hero-head " >
-						<Header />
-					</div >
-					<div class="hero-body">
-						<div class="container has-text-centered">
-							<h1 class="title is-1 ">
-								Banned Words
-						</h1>
-							<h2 class="subtitle is-2">
-						</h2>
-						</div>
-					</div>
-				</section >
-				<section class={classnames('hero', 'is-dark', 'is-medium')}>
-					<div class="hero-body">
-						<div class="container has-text-centered">
-							<p class="title is-3 ">
-								How To Play
-							</p>
-						</div>
-					</div>
-				</section >
-				<section class={classnames('section')}>
-					<div class="hero-body">
-						<div class="container ">
-							<p class="title is-3 ">
-								Join Now! ({username})
-							</p>
-							<div class="field">
-								<input class="input" onInput={linkState(this, 'name')} placeholder="Display Name" />
-							</div>
-							<div class="field">
-								<input class="input" onInput={linkState(this, 'email')} placeholder="Email" />
-							</div>
-							<div class="field">
-								<textarea class="textarea" placeholder="Description" />
-							</div>
-							<div class="field ">
-								<div class="control ">
-									<button class="button is-link is-fullwidth" onClick={this.handleClick}>Join</button>
-								</div>
-
-							</div>
-						</div>
-					</div>
-				</section >
-			</div>
-		);
-	}
+        );
+    }
 }
 
 
-const mapToProps = ({ username, loading, guid }) => ({ username, loading, guid });
+const mapToProps = ({ name, guid }) => ({ name, guid });
 export default connect(mapToProps, actions)(Home);

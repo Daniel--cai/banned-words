@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
 import { Router } from 'preact-router';
 
-import Home from '../routes/home';
+import Home from '../routes/Home';
 import Game from '../routes/Game';
 import Lobby from '../routes/Lobby'
 import Submission from '../routes/Submission'

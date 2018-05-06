@@ -1,0 +1,21 @@
+type Game {
+	id: ID!
+	banned: [[String]]
+	keywords: [[String]]
+	players: [Player]
+	teams: [String]
+}
+
+type Player {
+	name: String
+	team: Int
+}
+
+type Query {
+	getGame(id: ID!): Game
+	getPlayers(id: ID!): Player
+}
+
+schema {
+	query: Query
+}

@@ -1,17 +1,27 @@
-import uuid from 'uuid'
-import * as AWS from 'aws-sdk';
-import bodyParser from 'body-parser';
-//let dynamoDb = dbprovider();
+import { Target } from '../models/target';
+import dbprovider from '../framework/dbprovider';
+const dynamoDb = dbprovider();
 
-export const create = (event, context, cb) => {
-	const body = {
-		message: "Hello from Typescript!"
-	};
-	const response = {
-		statusCode: 200,
-		body: JSON.stringify(body)
-	};
-	return cb(null, response);
+
+const params = {
+	TableName: process.env.BANNED_WORDS_LIST_TABLE,
+}
+
+export const getWords = (event, context, cb) => {
+
+	dynamoDb.scan(params, function (err, data) {
+		if (err) {
+			cb(err, null)
+		} else {
+			const keywords = data.Items.map((item: Target) => item.Value)
+			const response = {
+				statusCode: 200,
+				body: JSON.stringify(keywords),
+			}
+			cb(null, response);
+		}
+
+	});
 }
 
 

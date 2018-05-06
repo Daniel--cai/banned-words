@@ -7,6 +7,7 @@ provider:
   region: ap-southeast-2
   environment:
     DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+    BANNED_WORD_LIST_TABLE: ${self:custom.secrets.BANNED_WORDS_LIST_TABLE} 
 
   iamRoleStatements:
     - Effect: "Allow"
@@ -17,22 +18,27 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
-      # Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
-      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+      Resource: 
+        - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+        - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:custom.secrets.BANNED_WORDS_LIST_TABLE}"
+
 functions:
-  app:
-    handler: index.handler
-    events:
-      - http: ANY /
-      - http: 'ANY {proxy+}'
   list:
-    handler: users/handler.create
+    handler: lobby/handler.getWords
     events:
       - http:
-          path: users
+          path: lobby
           method: get
           cors: true
-
+    environment:
+      BANNED_WORDS_LIST_TABLE: ${self:custom.secrets.BANNED_WORDS_LIST_TABLE}
+  game:
+    handler: lobby/create.createLobby
+    events:
+      - http: 
+          path: lobby
+          method: post
+          cors : true
 resources:
   Resources:
     UsersDynamoDbTable:
@@ -51,16 +57,69 @@ resources:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         TableName: ${self:provider.environment.DYNAMODB_TABLE}
+    AppSyncServiceRole:
+      Type: "AWS::IAM::Role"
+      Properties:
+        RoleName: "dynamo-AppSyncServiceRole"
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            -
+              Effect: "Allow"
+              Principal:
+                Service:
+                  - "appsync.amazonaws.com"
+              Action:
+                - "sts:AssumeRole"
+        Policies:
+          -
+            PolicyName: "Dynamo-AppSyncServiceRole-Policy"
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                -
+                  Effect: "Allow"
+                  Action:
+                    - "dynamodb:Query"
+                    - "dynamodb:BatchWriteItem"
+                    - "dynamodb:GetItem"
+                    - "dynamodb:DeleteItem"
+                    - "dynamodb:PutItem"
+                    - "dynamodb:Scan"
+                    - "dynamodb:UpdateItem"
+                  Resource:
+                    - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
 
 custom:
   secrets: ${file(secret.${opt:stage, self:provider.stage}.yml)}
   webpackIncludeModules: true
-  # dynamodb:
-  #   start:
-  #     migrate: true
+  accountId: ${self:custom.secrets.ACCOUNTID}
+  appSyncDataSource: banned_words_game
+  appSync:
+    name: banned-words-graphql
+    authenticationType: API_KEY
+    apiId:  ${self:custom.secrets.APPSYNC_API_ID}
+    apiKey: ${self:custom.secrets.APPSYNC_API_KEY}
+    mappingTemplatesLocation: MappingTemplates
+    mappingTemplates:
+      - dataSource: ${self:custom.appSyncDataSource}
+        type: Query
+        field: getGame
+        request: "getGame.request"
+        response: "getGame.response" 
+    schema: schema.graphql 
+    serviceRole: "AppSyncServiceRole"
+    dataSources:
+      - type: AMAZON_DYNAMODB
+        name: ${self:custom.appSyncDataSource}
+        description: dynamodb
+        config:
+          tableName: ${self:provider.environment.DYNAMODB_TABLE}
+          serviceRoleArn: "arn:aws:iam::${self:custom.accountId}:role/dynamo-${self:custom.appSync.serviceRole}"
 
 
 plugins:
   - serverless-dynamodb-local
   - serverless-webpack
   - serverless-offline
+  - serverless-appsync-plugin

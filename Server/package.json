@@ -17,7 +17,10 @@
     "uuid": "^2.0.3"
   },
   "devDependencies": {
+    "@types/aws-sdk": "^2.7.0",
+    "@types/node": "^10.0.3",
     "serverless": "^1.25.0",
+    "serverless-appsync-plugin": "0.0.7",
     "serverless-dynamodb-local": "^0.2.27",
     "serverless-offline": "^3.20.3",
     "serverless-secrets-plugin": "^0.1.0",

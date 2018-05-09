@@ -16,6 +16,19 @@ type Query {
 	getPlayers(id: ID!): Player
 }
 
+type Subscription {
+	addedPlayer(gameId: String name: String!): Player
+	@aws_subscribe(mutations: ["addPlayers"])
+}
+
+type Mutation {
+	addPlayers(gameId: String name: String!) : Player
+}
+
 schema {
 	query: Query
+	mutation: Mutation
+	subscription: Subscription
 }
+
+

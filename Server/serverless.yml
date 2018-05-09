@@ -8,6 +8,7 @@ provider:
   environment:
     DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
     BANNED_WORD_LIST_TABLE: ${self:custom.secrets.BANNED_WORDS_LIST_TABLE} 
+    LAMBDA_NAME: ${self:service}-${opt:stage, self:provider.stage}
 
   iamRoleStatements:
     - Effect: "Allow"
@@ -39,6 +40,10 @@ functions:
           path: lobby
           method: post
           cors : true
+
+  resolver_getPlayers: 
+    handler: src/graphql/resolvers/player.getPlayers
+
 resources:
   Resources:
     UsersDynamoDbTable:
@@ -94,7 +99,8 @@ custom:
   secrets: ${file(secret.${opt:stage, self:provider.stage}.yml)}
   webpackIncludeModules: true
   accountId: ${self:custom.secrets.ACCOUNTID}
-  appSyncDataSource: banned_words_game
+  appSyncDynamodbDataSource: dynamodb
+  appSyncLambdaDataSource: lambda
   appSync:
     name: banned-words-graphql
     authenticationType: API_KEY
@@ -102,7 +108,7 @@ custom:
     apiKey: ${self:custom.secrets.APPSYNC_API_KEY}
     mappingTemplatesLocation: MappingTemplates
     mappingTemplates:
-      - dataSource: ${self:custom.appSyncDataSource}
+      - dataSource: ${self:custom.appSyncDynamodbDataSource}
         type: Query
         field: getGame
         request: "getGame.request"
@@ -110,8 +116,14 @@ custom:
     schema: schema.graphql 
     serviceRole: "AppSyncServiceRole"
     dataSources:
+      - type: AWS_LAMBDA
+        name: ${self:custom.appSyncLambdaDataSource}
+        description: lambda
+        config:
+          lambdaFunctionArn: "arn:aws:lambda:${opt:region, self:provider.region}:${self:custom.accountId}:function:${self:provider.environment.LAMBDA_NAME}-resolver_getPlayers"
+          serviceRoleArn: "arn:aws:iam::${self:custom.accountId}:role/Lambda-${self:custom.appSync.serviceRole}"
       - type: AMAZON_DYNAMODB
-        name: ${self:custom.appSyncDataSource}
+        name: ${self:custom.appSyncDynamodbDataSource}
         description: dynamodb
         config:
           tableName: ${self:provider.environment.DYNAMODB_TABLE}

@@ -13,16 +13,16 @@ type Player {
 
 type Query {
 	getGame(id: ID!): Game
-	getPlayers(id: ID!): Player
+	getPlayers(id: ID!): [Player]
 }
 
 type Subscription {
-	addedPlayer(gameId: String name: String!): Player
-	@aws_subscribe(mutations: ["addPlayers"])
+	addedPlayer(id: String name: String!): Player
+	@aws_subscribe(mutations: ["addPlayer"])
 }
 
 type Mutation {
-	addPlayers(gameId: String name: String!) : Player
+	addPlayer(id: String! name: String!) : Player
 }
 
 schema {

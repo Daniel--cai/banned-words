@@ -18,7 +18,7 @@ export default class App extends Component<Props, State> {
 				<Router >
 					<Home path="/" />
 					<Game path="/game/" />
-					<Lobby path="/lobby" />
+					<Lobby path="/lobby"/>
 					<Submission path="/submission" />
 				</Router>
 			</div>

@@ -24,6 +24,11 @@ module.exports = {
                 exclude: /node_modules/
             },
             {
+                type: 'javascript/auto',
+                test: /\.mjs$/,
+                use: []
+            },
+            {
                 test: /\.css$/,
                 use: [
                     'style-loader',

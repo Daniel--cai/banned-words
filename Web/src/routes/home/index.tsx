@@ -15,7 +15,8 @@ enum MenuState {
 
 interface State {
     status: MenuState
-    name: string
+    name: string,
+    id: string
 }
 
 interface Props {
@@ -28,17 +29,24 @@ class Home extends Component<Props & Action, State> {
         super(props);
         this.state = {
             status: MenuState.Default,
-            name: ""
+            name: "",
+            id: ""
         }
     }
     handleClick = (status: MenuState) => (event) => {
         this.setState({ status })
     }
 
-     handleNewGame = async (event) => {
+    handleNewGame = async (event) => {
         await this.props.createLobby(this.state.name)
         console.log(this.props.guid)
-        route("/lobby")
+        route(`/lobby?id=${this.props.guid}`)
+    }
+
+    handleJoinGame = async (event) => {
+        await this.props.joinLobby(this.state.name, this.state.id)
+        console.log(this.props.guid);
+        route(`/lobby?id=${this.props.guid}`)
     }
 
     renderNewGame() {
@@ -56,21 +64,26 @@ class Home extends Component<Props & Action, State> {
             </div>
         )
     }
+
+    handleChange = (event) => {
+        this.setState({ [event.target.name]: event.target.value })
+    }
+
     renderJoinGame() {
         return (
             <div>
                 <div class="field">
                     <div class="control">
-                        <input class="input" type="text" placeholder="Enter an access Code" maxLength={5} />
+                        <input class="input" type="text" name="id" value={this.state.id} onChange={this.handleChange} placeholder="Enter an access Code" maxLength={5} />
                     </div>
                 </div>
                 <div class="field">
                     <div class="control">
-                        <input class="input" type="text" placeholder="Name your name" />
+                        <input class="input" type="text" name="name" value={this.state.name} onChange={this.handleChange} placeholder="Name your name" />
                     </div>
                 </div>
                 <div class="field">
-                    <button class="button ">Join</button>&nbsp;
+                    <button class="button" onClick={this.handleNewGame}>Join</button>&nbsp;
                     <button class="button" onClick={this.handleClick(MenuState.Default)}>Back</button>
                 </div>
             </div>

@@ -40,9 +40,9 @@ functions:
           path: lobby
           method: post
           cors : true
+  lambda_graphql_resolver: 
+    handler: src/graphql/resolvers/resolver.handler
 
-  resolver_getPlayers: 
-    handler: src/graphql/resolvers/player.getPlayers
 
 resources:
   Resources:
@@ -62,6 +62,35 @@ resources:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         TableName: ${self:provider.environment.DYNAMODB_TABLE}
+    
+    AppSyncLambdaServiceRole:
+      Type: "AWS::IAM::Role"
+      Properties:
+        RoleName: "lambda-AppSyncServiceRole"
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            -
+              Effect: "Allow"
+              Principal:
+                Service:
+                  - "appsync.amazonaws.com"
+              Action:
+                - "sts:AssumeRole"
+        Policies:
+          -
+            PolicyName: "Lambda-${self:custom.appSync.serviceRole}-Policy"
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                -
+                  Effect: "Allow"
+                  Action:
+                    - "lambda:invokeFunction"
+                  Resource:
+                    - "arn:aws:lambda:${self:provider.region}:${self:custom.accountId}:function:${self:provider.environment.LAMBDA_NAME}-lambda_graphql_resolver"
+                    - "arn:aws:lambda:${self:provider.region}:${self:custom.accountId}:function:${self:provider.environment.LAMBDA_NAME}-lambda_graphql_resolver:*"
+  
     AppSyncServiceRole:
       Type: "AWS::IAM::Role"
       Properties:
@@ -113,6 +142,16 @@ custom:
         field: getGame
         request: "getGame.request"
         response: "getGame.response" 
+      - dataSource: ${self:custom.appSyncLambdaDataSource}
+        type: Query
+        field: getPlayers
+        request: "getPlayers.request"
+        response: "getPlayers.response" 
+      - dataSource: ${self:custom.appSyncLambdaDataSource}
+        type: Mutation
+        field: addPlayer
+        request: "addPlayer.request"
+        response: "addPlayer.response" 
     schema: schema.graphql 
     serviceRole: "AppSyncServiceRole"
     dataSources:
@@ -120,8 +159,8 @@ custom:
         name: ${self:custom.appSyncLambdaDataSource}
         description: lambda
         config:
-          lambdaFunctionArn: "arn:aws:lambda:${opt:region, self:provider.region}:${self:custom.accountId}:function:${self:provider.environment.LAMBDA_NAME}-resolver_getPlayers"
-          serviceRoleArn: "arn:aws:iam::${self:custom.accountId}:role/Lambda-${self:custom.appSync.serviceRole}"
+          lambdaFunctionArn: "arn:aws:lambda:${opt:region, self:provider.region}:${self:custom.accountId}:function:${self:provider.environment.LAMBDA_NAME}-lambda_graphql_resolver"
+          serviceRoleArn: "arn:aws:iam::${self:custom.accountId}:role/lambda-${self:custom.appSync.serviceRole}"
       - type: AMAZON_DYNAMODB
         name: ${self:custom.appSyncDynamodbDataSource}
         description: dynamodb

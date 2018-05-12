@@ -6,20 +6,36 @@ import linkState from 'linkstate';
 import { connect } from 'redux-zero/preact';
 import actions, { Action } from './actions';
 import { route } from 'preact-router'
-
+import { Player } from '../../store/'
 
 interface State {
 }
 
 interface Props {
+    id: string
     name: string
     guid: string
+    players: Player[]
 }
 
 class Lobby extends Component<Props & Action, State> {
 
     handleChangeTeams = (team) => (event) => {
 
+    }
+
+    componentWillMount() {
+        console.log(this.props.guid)
+        //if (this.props.id == "" || this.props.id != this.props.guid) {
+        //route('/')
+        //}
+    }
+
+    async componentDidMount() {
+        console.log(this.props.id)
+        //const players = await this.props.getPlayers(this.props.id);
+        const players = await this.props.getPlayers("97291");
+        console.log(players)
     }
 
     renderTeams() {
@@ -30,13 +46,13 @@ class Lobby extends Component<Props & Action, State> {
                     <th class="is-danger">Red</th>
                 </tr>
                 {
-                    (Array(8 - length).fill(""))
-                        .map((player, index) => {
-
+                    (Array(8).fill(""))
+                        .map((_, index) => {
                             // if (index % 2 == 0) {
                             // const next = this.props.taboos[index + 1]
-                            const word = "sdfsdf"
-                            const next = "sdfsdf"
+                            const players = this.props.players;
+                            const word = players[index] ? players[index].name : ""
+                            const next = players[index + 1] ? players[index + 1].name : ""
                             return (
                                 <tr >
 
@@ -63,7 +79,7 @@ class Lobby extends Component<Props & Action, State> {
 
     renderLobbyDetails() {
         return (
-            <p>{this.props.guid}</p>
+            <p class="title is-2">{this.props.id.toUpperCase()}</p>
         )
     }
 
@@ -86,5 +102,5 @@ class Lobby extends Component<Props & Action, State> {
 }
 
 
-const mapToProps = ({ name, guid }) => ({ name, guid });
+const mapToProps = ({ name, guid, id, players }) => ({ name, guid, id, players });
 export default connect(mapToProps, actions)(Lobby);

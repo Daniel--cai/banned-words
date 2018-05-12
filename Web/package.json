@@ -36,6 +36,7 @@
     "bulma": "^0.6.2",
     "classnames": "^2.2.5",
     "guid": "0.0.12",
+    "js-cookie": "^2.2.0",
     "linkstate": "^1.1.1",
     "preact": "^8.2.6",
     "preact-compat": "^3.17.0",

@@ -10,6 +10,7 @@ export const createLobby = (event, context, callback) => {
 
   const code: string = uuid.v1();
   const player: Player = {
+    id: uuid.v1(),
     name: event.name,
     team: 0
   }

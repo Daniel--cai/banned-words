@@ -45,8 +45,8 @@ class Home extends Component<Props & Action, State> {
 
     handleJoinGame = async (event) => {
         await this.props.joinLobby(this.state.name, this.state.id)
-        console.log(this.props.guid);
-        route(`/lobby?id=${this.props.guid}`)
+        console.log(this.state.id);
+        route(`/lobby?id=${this.state.id}`)
     }
 
     renderNewGame() {
@@ -83,7 +83,7 @@ class Home extends Component<Props & Action, State> {
                     </div>
                 </div>
                 <div class="field">
-                    <button class="button" onClick={this.handleNewGame}>Join</button>&nbsp;
+                    <button class="button" onClick={this.handleJoinGame}>Join</button>&nbsp;
                     <button class="button" onClick={this.handleClick(MenuState.Default)}>Back</button>
                 </div>
             </div>

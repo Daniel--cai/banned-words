@@ -33,8 +33,9 @@ class Lobby extends Component<Props & Action, State> {
 
     async componentDidMount() {
         console.log(this.props.id)
-        //const players = await this.props.getPlayers(this.props.id);
-        const players = await this.props.getPlayers("97291");
+        const players = await this.props.getPlayers(this.props.id);
+        this.props.subscribePlayers(this.props.id);
+        //const players = await this.props.getPlayers("97291");
         console.log(players)
     }
 
@@ -48,7 +49,7 @@ class Lobby extends Component<Props & Action, State> {
                 {
                     (Array(8).fill(""))
                         .map((_, index) => {
-                            // if (index % 2 == 0) {
+                            if (index % 2 != 0) return
                             // const next = this.props.taboos[index + 1]
                             const players = this.props.players;
                             const word = players[index] ? players[index].name : ""

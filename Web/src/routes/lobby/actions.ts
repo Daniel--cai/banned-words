@@ -2,11 +2,12 @@
 import { State, Player } from '../../store'
 import Api from '../../framework/Api'
 import GraphQLClient from '../../framework/Appsync'
-import { GetPlayersEvent } from './events'
+import { GetPlayersEvent, AddedPlayerEvent, } from './events'
 
 export interface Action {
 	createLobby: (name: string) => Promise<State>
 	getPlayers: (id: string) => Promise<State>
+	addedPlayers: (id: string, callback: any) => void
 }
 
 
@@ -29,6 +30,14 @@ const actions = store => ({
 			console.log(players)
 			return { players: players }
 		} catch (error) {
+			return { ...state, loading: false }
+		}
+	},
+	addedPlayers: (state: State, id: string, callback: any) => {
+		try {
+			const response = GraphQLClient.subscribe(AddedPlayerEvent, callback, { id }, )
+		} catch (error) {
+			console.error(error);
 			return { ...state, loading: false }
 		}
 	}

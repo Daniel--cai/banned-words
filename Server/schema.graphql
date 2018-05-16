@@ -17,7 +17,7 @@ type Query {
 }
 
 type Subscription {
-	addedPlayer(id: String name: String!): Player
+	addedPlayer(id: String): Player
 	@aws_subscribe(mutations: ["addPlayer"])
 }
 

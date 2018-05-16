@@ -15,7 +15,7 @@ interface Props {
     id: string
     name: string
     guid: string
-    players: Player[]
+    players: Player[],
 }
 
 class Lobby extends Component<Props & Action, State> {
@@ -31,10 +31,15 @@ class Lobby extends Component<Props & Action, State> {
         //}
     }
 
+    handleAddedPlayer = (response) => {
+        console.log("new player!");
+        console.log(response)
+    }
+
     async componentDidMount() {
         console.log(this.props.id)
         const players = await this.props.getPlayers(this.props.id);
-        this.props.subscribePlayers(this.props.id);
+        this.props.addedPlayers(this.props.id, this.handleAddedPlayer);
         //const players = await this.props.getPlayers("97291");
         console.log(players)
     }

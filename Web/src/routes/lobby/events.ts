@@ -6,5 +6,13 @@ export const GetPlayersEvent = `
             team
         }
     }
-    `
+`
 
+export const AddedPlayerEvent = `
+subscription AddedPlayerEvent($id: String! ) {
+    addedPlayer(id: $id) {
+        name
+        team
+    }
+}
+`

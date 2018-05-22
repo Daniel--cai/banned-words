@@ -2,16 +2,16 @@ import { Target } from '../models/target';
 import dbprovider from '../framework/dbprovider';
 import * as uuid from 'uuid'
 import { Player } from '../models/player'
-
 const dynamoDb = dbprovider();
 
 
 export const createLobby = (event, context, callback) => {
 
   const code: string = uuid.v1();
+  const data = JSON.parse(event.body)
   const player: Player = {
     id: uuid.v1(),
-    name: event.name,
+    name: data.name,
     team: 0
   }
   var params = {

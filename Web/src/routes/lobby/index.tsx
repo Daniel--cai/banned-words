@@ -39,9 +39,10 @@ class Lobby extends Component<Props & Action, State> {
     async componentDidMount() {
         console.log(this.props.id)
         const players = await this.props.getPlayers(this.props.id);
+        console.log("got players!")
         this.props.addedPlayers(this.props.id, this.handleAddedPlayer);
         //const players = await this.props.getPlayers("97291");
-        console.log(players)
+        console.log(this.props.players)
     }
 
     renderTeams() {

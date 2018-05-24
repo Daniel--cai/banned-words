@@ -34,6 +34,7 @@ class Lobby extends Component<Props & Action, State> {
     handleAddedPlayer = (response) => {
         console.log("new player!");
         console.log(response)
+        this.props.receivedAddedPlayers(response.value);
     }
 
     async componentDidMount() {
@@ -52,14 +53,15 @@ class Lobby extends Component<Props & Action, State> {
                     <th class="is-info">Blue</th>
                     <th class="is-danger">Red</th>
                 </tr>
-                {
-                    (Array(8).fill(""))
-                        .map((_, index) => {
-                            if (index % 2 != 0) return
+                {this.props.players != null &&
+                    this.props.players
+                        .map((player, index) => {
+                            //if (index % 2 != 0) return
                             // const next = this.props.taboos[index + 1]
-                            const players = this.props.players;
-                            const word = players[index] ? players[index].name : ""
-                            const next = players[index + 1] ? players[index + 1].name : ""
+                            //const players = this.props.players || []
+
+                            const word = player.name
+                            //const next = players[index + 1] ? players[index + 1].name : ""
                             return (
                                 <tr >
 
@@ -67,7 +69,7 @@ class Lobby extends Component<Props & Action, State> {
                                         <span >{word || '\u200E'}</span>
                                     </td>
                                     <td class="is-half">
-                                        <span >{next}</span>
+                                        <span >{word}</span>
                                     </td>
                                 </tr>
                             )

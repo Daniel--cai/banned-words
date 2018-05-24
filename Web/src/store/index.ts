@@ -1,7 +1,7 @@
 import createStores from 'redux-zero'
 
 export interface Player {
-    id: string;
+    id?: string;
     name: string;
     team: number;
 }

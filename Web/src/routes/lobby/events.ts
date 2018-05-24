@@ -8,11 +8,21 @@ export const GetPlayersEvent = `
     }
 `
 
+
 export const AddedPlayerEvent = `
-subscription AddedPlayerEvent($id: String! ) {
-    addedPlayer(id: $id) {
+subscription AddedPlayerEvent {
+    addedPlayer {
         name
         team
     }
 }
 `
+
+// export const AddedPlayerEvent = `
+// subscription AddedPlayerEvent($id: String! ) {
+//     addedPlayer(id: $id) {
+//         name
+//         team
+//     }
+// }
+// `

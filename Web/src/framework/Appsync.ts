@@ -10,13 +10,19 @@ export default class GraphQLClient {
         return response as any;
     }
 
-    static async subscribe(query: string, callback: any, parameter?: Object, ) {
-        console.log("setup sub")
+    static async subscribe(query: string, callback: any, parameter?: Object ) {
+       
+        try {
 
-        const subscription = API.graphql(graphqlOperation(query, parameter)) as any;
-        subscription.subscribe({ next: (event) => { 
-            console.log("new even!")
-            callback(event) 
-        } })
+            const subscription = API.graphql(graphqlOperation(query)) as any;
+            subscription.subscribe({ next: (event) => { 
+                console.log("new even!")
+                callback(event) 
+            } })
+            console.log("setup sub success")
+        } catch (ex){
+            console.log("failed to subscribe to event:", parameter)
+            console.error(ex);
+        }
     }
 }

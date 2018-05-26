@@ -36,11 +36,12 @@ const actions = store => ({
 	},
 	receivedAddedPlayers: (state: State, data: Player) => {
 		console.log("receivedAddedPlayers")
+		console.log(data)
 		return { ...state, players: [...state.players, data] }
 	},
 	addedPlayers: (state: State, id: string, callback: any) => {
 		try {
-			const response = GraphQLClient.subscribe(AddedPlayerEvent, callback, { id })
+			const response = GraphQLClient.subscribe(AddedPlayerEvent, callback, { id:id.toLowerCase() })
 		} catch (error) {
 			console.error(error);
 			return { ...state, loading: false }

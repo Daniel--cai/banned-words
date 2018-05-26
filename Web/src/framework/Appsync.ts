@@ -14,7 +14,7 @@ export default class GraphQLClient {
        
         try {
 
-            const subscription = API.graphql(graphqlOperation(query)) as any;
+            const subscription = API.graphql(graphqlOperation(query, parameter)) as any;
             subscription.subscribe({ next: (event) => { 
                 console.log("new even!")
                 callback(event) 

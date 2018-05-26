@@ -34,13 +34,13 @@ class Lobby extends Component<Props & Action, State> {
     handleAddedPlayer = (response) => {
         console.log("new player!");
         console.log(response)
-        this.props.receivedAddedPlayers(response.value);
+        this.props.receivedAddedPlayers(response.value.data.addedPlayer);
     }
 
     async componentDidMount() {
-        console.log(this.props.id)
         const players = await this.props.getPlayers(this.props.id);
         console.log("got players!")
+        console.log(this.props.id)
         this.props.addedPlayers(this.props.id, this.handleAddedPlayer);
         //const players = await this.props.getPlayers("97291");
         console.log(this.props.players)

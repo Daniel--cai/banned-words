@@ -27,9 +27,10 @@ const actions = store => ({
 		try {
 			const response = await GraphQLClient.query(AddPlayerEvent, body)
 			const players = response.data.addPlayer
+			console
 			console.log(players)
 			console.log(response)
-			return { players: players, guid: id }
+			return { players: [players], guid: id }
 		} catch (error) {
 			console.error(error)
 			//no games found

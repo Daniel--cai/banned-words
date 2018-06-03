@@ -26,3 +26,13 @@ subscription AddedPlayerEvent($id: String! ) {
     }
 }
 `
+
+export const ChangeTeamEvent = `
+mutation ChangeTeamEvent($id: String!, $player: String!, $team: number) {
+    changeTeam(id: $id, player: $player, team: $team){
+        id,
+        name,
+        team
+    }
+}
+`

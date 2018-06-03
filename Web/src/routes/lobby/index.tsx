@@ -47,6 +47,8 @@ class Lobby extends Component<Props & Action, State> {
     }
 
     renderTeams() {
+        const blue = this.props.players.filter(player => player.team == 0)
+        const red = this.props.players.filter(player => player.team == 1)
         return (
             <table class="table is-bordered  is-fullwidth">
                 <tr>
@@ -54,14 +56,14 @@ class Lobby extends Component<Props & Action, State> {
                     <th class="is-danger">Red</th>
                 </tr>
                 {this.props.players != null &&
-                    this.props.players
-                        .map((player, index) => {
+                    Array(8).fill("")
+                        .map((_, index) => {
                             //if (index % 2 != 0) return
                             // const next = this.props.taboos[index + 1]
                             //const players = this.props.players || []
 
-                            const word = player.name
-                            //const next = players[index + 1] ? players[index + 1].name : ""
+                            const word = blue[index] || ""
+                            const next = red[index] || ""
                             return (
                                 <tr >
 
@@ -69,7 +71,7 @@ class Lobby extends Component<Props & Action, State> {
                                         <span >{word || '\u200E'}</span>
                                     </td>
                                     <td class="is-half">
-                                        <span >{word}</span>
+                                        <span >{next || '\u200E'}</span>
                                     </td>
                                 </tr>
                             )

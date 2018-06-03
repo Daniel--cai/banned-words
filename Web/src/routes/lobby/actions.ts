@@ -2,13 +2,15 @@
 import { State, Player } from '../../store'
 import Api from '../../framework/Api'
 import GraphQLClient from '../../framework/Appsync'
-import { GetPlayersEvent, AddedPlayerEvent, } from './events'
+import { GetPlayersEvent, AddedPlayerEvent,ChangeTeamEvent } from './events'
 
 export interface Action {
 	createLobby: (name: string) => Promise<State>;
 	getPlayers: (id: string) => Promise<State>;
 	addedPlayers: (id: string, callback: any) => void;
-	receivedAddedPlayers: (player: Player) => void
+	receivedAddedPlayers: (player: Player) => void;
+	changeTeam: (id: string) => void;
+	receivedChangedTeam: (player: Player) => void;
 }
 
 
@@ -38,6 +40,22 @@ const actions = store => ({
 		console.log("receivedAddedPlayers")
 		console.log(data)
 		return { ...state, players: [...state.players, data] }
+	},
+	receivedChangeTeam: (state: State, data: Player) => {
+		console.log("receivedAddedPlayers")
+		console.log(data)
+		return {
+			players: state.players
+				.filter(player => player.id == data.id)
+				.push(data)
+		}
+	},
+	changeTeam: (state: State, id: string, player: Player) => {
+		try {
+			const response = GraphQLClient.query(ChangeTeamEvent, { ...player })
+		} catch (error) {
+
+		}
 	},
 	addedPlayers: (state: State, id: string, callback: any) => {
 		try {

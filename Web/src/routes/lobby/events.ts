@@ -36,3 +36,23 @@ mutation ChangeTeamEvent($id: String!, $player: String!, $team: number) {
     }
 }
 `
+
+export const AddKeyWordEvent = `
+mutation AddKeywordEvent($id: String!, $word: String!, $team: number) {
+    addKeyword(id: $id, word: $word, team: $team){
+        id
+        word,
+        team
+    }
+}
+`
+
+export const AddedKeyWordEvent = `
+subscription AddedKeywordEvent($id: String!, $word: String!, $team: number) {
+    addKeyword(id: $id, word: $word, team: $team){
+        id,
+        word,
+        team
+    }
+}
+`

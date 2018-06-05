@@ -21,7 +21,7 @@ interface Props {
 class Lobby extends Component<Props & Action, State> {
 
     handleChangeTeams = (team) => (event) => {
-
+        this.props.changeTeam(this.props.id )
     }
 
     componentWillMount() {
